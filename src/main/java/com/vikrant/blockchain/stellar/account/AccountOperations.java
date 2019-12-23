@@ -6,10 +6,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stellar.sdk.KeyPair;
+import org.stellar.sdk.Server;
+import org.stellar.sdk.responses.AccountResponse;
+import org.stellar.sdk.responses.AccountResponse.Balance;
 
 public class AccountOperations {
 
@@ -25,6 +31,16 @@ public class AccountOperations {
     LOGGER.info("New account created");
 
     return pair;
+  }
+
+  public List<Balance> getAccountBalances(String accountId) throws IOException {
+
+    Server server = new Server(
+        NetworkUtil.resourceBundle.getString(Constants.STELLAR_TESTNET_SERVER_URL));
+    AccountResponse account = server.accounts().account(accountId);
+
+    return Arrays.stream(account.getBalances()).collect(Collectors.toList());
+
   }
 
 }
